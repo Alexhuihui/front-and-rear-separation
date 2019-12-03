@@ -39,7 +39,7 @@ public class MailTools {
      * @param email 接收者的邮箱
      */
     private void sendNormalEmail(String title,boolean titleWithName,String content,boolean contentWithName,String email){
-        String dName="T-door官方";
+        String dName="汪永晖";
         MimeMessage mimeMessage=null;
         try{
             mimeMessage=mailSender.createMimeMessage(); //创建要发送的消息

@@ -23,4 +23,8 @@ public interface UserService {
      * @return
      */
     RespEntity RegisterInfo(String email,String nickName,String password,String registerCode);
+
+    RespEntity login(String email, String password);
+
+    RespEntity changePassword(String email, String usedPassword, String newPassword);
 }

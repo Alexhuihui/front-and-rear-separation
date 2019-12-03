@@ -1,6 +1,7 @@
 package top.alexmmd.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import java.util.Map;
  * @author 汪永晖
  */
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
@@ -20,7 +22,7 @@ public class UserController {
 
     private RespEntity respEntity = new RespEntity();
 
-    @RequestMapping("register")
+    @PostMapping("/register")
     public RespEntity register(@RequestBody Map<String, Object> map) {
         String e_mail = (String) map.get("email");
         String nickName = (String) map.get("nickName");
@@ -30,10 +32,18 @@ public class UserController {
         return respEntity;
     }
 
-    @RequestMapping("sendCode")
+    @PostMapping("/sendCode")
     public RespEntity sendPollCode(@RequestBody Map<String, Object> map) {
         String email = (String) map.get("email");
         RespEntity respEntity = userService.sendCode(email);
+        return respEntity;
+    }
+
+    @PostMapping("/login")
+    public RespEntity login(@RequestBody Map<String, Object> map) {
+        String email = (String) map.get("email");
+        String password = (String) map.get("password");
+        respEntity = userService.login(email, password);
         return respEntity;
     }
 }

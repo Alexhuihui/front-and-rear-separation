@@ -8,10 +8,7 @@ import top.alexmmd.dao.UserDao;
 import top.alexmmd.domain.User;
 import top.alexmmd.domain.VerificationCode;
 import top.alexmmd.service.UserService;
-import top.alexmmd.util.MailTools;
-import top.alexmmd.util.RandomTools;
-import top.alexmmd.util.RespCode;
-import top.alexmmd.util.RespEntity;
+import top.alexmmd.util.*;
 
 import java.util.Date;
 
@@ -103,6 +100,47 @@ public class UserServiceImpl implements UserService {
             }
         } else {
             respEntity = new RespEntity(RespCode.REGISTER_FAILED);
+        }
+        return respEntity;
+    }
+
+    /**
+     * 登录验证
+     *
+     * @param email
+     * @param password
+     * @return
+     */
+    @Override
+    public RespEntity login(String email, String password) {
+        RespEntity respEntity = new RespEntity();
+        String token = "";
+        if (userDao.findByEmailAndPassword(email, password).isPresent()) {
+            token = TokenUtil.createJwtToken(email);
+            respEntity = new RespEntity(RespCode.LOGIN_SUCCESS, token);
+        } else {
+            respEntity = new RespEntity(RespCode.LOGIN_FAILED);
+        }
+        return respEntity;
+    }
+
+    /**
+     * 根据旧密码更改密码
+     *
+     * @param usedPassword
+     * @return
+     */
+    @Override
+    public RespEntity changePassword(String email, String usedPassword, String newPassword) {
+        RespEntity respEntity = new RespEntity();
+        User user = userDao.findByEmailAndPassword(email, usedPassword).orElse(new User());
+
+        if (user.getEmail() == null) {
+            respEntity = new RespEntity(RespCode.PASSWORD_FAILED);
+        } else {
+            user.setPassword(newPassword);
+            userDao.save(user);
+            respEntity = new RespEntity(RespCode.SUCCESS);
         }
         return respEntity;
     }
