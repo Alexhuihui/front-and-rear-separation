@@ -1,5 +1,7 @@
 package top.alexmmd.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +20,7 @@ import java.util.Map;
  * @author 汪永晖
  */
 @RestController
+@Api(value = "/user", description = "用户注册登录等操作接口")
 @RequestMapping("/user")
 public class UserController {
 
@@ -28,6 +31,7 @@ public class UserController {
 
     @PassToken
     @PostMapping("/register")
+    @ApiOperation(value="注册", notes="注册")
     public RespEntity register(@RequestBody Map<String, Object> map) {
         String e_mail = (String) map.get("email");
         String nickName = (String) map.get("nickName");
@@ -39,6 +43,7 @@ public class UserController {
 
     @PassToken
     @PostMapping("/sendCode")
+    @ApiOperation(value="请求注册码", notes="注册时，填写邮箱后获取注册码")
     public RespEntity sendPollCode(@RequestBody Map<String, Object> map) {
         String email = (String) map.get("email");
         RespEntity respEntity = userService.sendCode(email);
@@ -47,6 +52,7 @@ public class UserController {
 
     @PassToken
     @PostMapping("/login")
+    @ApiOperation(value="登录", notes="登录校验，成功返回 token")
     public RespEntity login(@RequestBody Map<String, Object> map) {
         String email = (String) map.get("email");
         String password = (String) map.get("password");
@@ -63,6 +69,7 @@ public class UserController {
      */
     @UserLoginToken
     @PostMapping("/changePassword")
+    @ApiOperation(value="修改密码", notes="请求时必须在 header 的 Authorization 中添加 token 值")
     public RespEntity OperationPassword(@CurrentUser User user, @RequestBody Map<String, Object> map) {
         String email = user.getEmail();
         String newPassword = (String) map.get("newPassword");
