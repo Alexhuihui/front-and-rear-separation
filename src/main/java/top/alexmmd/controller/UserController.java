@@ -5,6 +5,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.alexmmd.annotation.CurrentUser;
+import top.alexmmd.annotation.PassToken;
+import top.alexmmd.annotation.UserLoginToken;
+import top.alexmmd.domain.User;
 import top.alexmmd.service.UserService;
 import top.alexmmd.util.RespEntity;
 
@@ -22,6 +26,7 @@ public class UserController {
 
     private RespEntity respEntity = new RespEntity();
 
+    @PassToken
     @PostMapping("/register")
     public RespEntity register(@RequestBody Map<String, Object> map) {
         String e_mail = (String) map.get("email");
@@ -32,6 +37,7 @@ public class UserController {
         return respEntity;
     }
 
+    @PassToken
     @PostMapping("/sendCode")
     public RespEntity sendPollCode(@RequestBody Map<String, Object> map) {
         String email = (String) map.get("email");
@@ -39,11 +45,29 @@ public class UserController {
         return respEntity;
     }
 
+    @PassToken
     @PostMapping("/login")
     public RespEntity login(@RequestBody Map<String, Object> map) {
         String email = (String) map.get("email");
         String password = (String) map.get("password");
         respEntity = userService.login(email, password);
+        return respEntity;
+    }
+
+    /**
+     * 更改密码
+     *
+     * @param user
+     * @param map
+     * @return
+     */
+    @UserLoginToken
+    @PostMapping("/changePassword")
+    public RespEntity OperationPassword(@CurrentUser User user, @RequestBody Map<String, Object> map) {
+        String email = user.getEmail();
+        String newPassword = (String) map.get("newPassword");
+        String usedPassword = (String) map.get("usedPassword");
+        respEntity = userService.changePassword(email, usedPassword, newPassword);
         return respEntity;
     }
 }
