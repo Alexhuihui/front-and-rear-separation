@@ -2,6 +2,7 @@ package top.alexmmd.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +13,10 @@ import top.alexmmd.annotation.PassToken;
 import top.alexmmd.annotation.UserLoginToken;
 import top.alexmmd.domain.User;
 import top.alexmmd.service.UserService;
+import top.alexmmd.util.RespCode;
 import top.alexmmd.util.RespEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -22,6 +25,7 @@ import java.util.Map;
 @RestController
 @Api(value = "/user", description = "用户注册登录等操作接口")
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -76,5 +80,23 @@ public class UserController {
         String usedPassword = (String) map.get("usedPassword");
         respEntity = userService.changePassword(email, usedPassword, newPassword);
         return respEntity;
+    }
+
+    /**
+     * 测试拦截器是否设置值到 httpServletRequest 中
+     * @param httpServletRequest
+     * @return
+     */
+    @PostMapping("/test")
+    @UserLoginToken
+    public RespEntity test(HttpServletRequest httpServletRequest) {
+        Object object = httpServletRequest.getAttribute("current_user");
+        User user = null;
+        if (object instanceof User) {
+            user = (User) object;
+        }
+
+        log.info(user.toString());
+        return new RespEntity(RespCode.SUCCESS.getCode(), user);
     }
 }
